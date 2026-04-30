@@ -2,6 +2,8 @@
 import { computed } from "vue";
 
 import GenreRail from "../components/GenreRail.vue";
+import MetricCard from "../components/MetricCard.vue";
+import StatePanel from "../components/StatePanel.vue";
 import { useGenres } from "../composables/useGenres";
 import { useTVMaze } from "../composables/useTVMaze";
 import { ShowsSchema } from "../types/show";
@@ -36,47 +38,30 @@ const genreSections = computed(() =>
         </div>
 
         <dl class="grid grid-cols-2 gap-3 lg:grid-cols-1">
-          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <dt class="text-xs font-medium tracking-wider text-slate-500 uppercase">Shows</dt>
-            <dd class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-              {{ totalShows }}
-            </dd>
-          </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <dt class="text-xs font-medium tracking-wider text-slate-500 uppercase">Genres</dt>
-            <dd class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-              {{ genreSections.length }}
-            </dd>
-          </div>
+          <MetricCard label="Shows" :value="totalShows" value-class="text-2xl" />
+          <MetricCard label="Genres" :value="genreSections.length" value-class="text-2xl" />
         </dl>
       </div>
     </section>
 
-    <section
+    <StatePanel
       v-if="error"
-      class="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-950 shadow-sm"
-    >
-      <h2 class="font-semibold">Unable to load the TV catalog.</h2>
-      <p class="mt-1 text-sm text-red-800">{{ error }}</p>
-    </section>
+      title="Unable to load the TV catalog."
+      :description="String(error)"
+      tone="danger"
+    />
 
-    <section
+    <StatePanel
       v-else-if="isFetching"
-      class="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-slate-950 shadow-sm"
-    >
-      <h2 class="font-semibold">Loading shows...</h2>
-      <p class="mt-1 text-sm text-slate-600">Pulling together the first set of genre rails.</p>
-    </section>
+      title="Loading shows..."
+      description="Pulling together the first set of genre rails."
+    />
 
-    <section
+    <StatePanel
       v-else-if="genreSections.length === 0"
-      class="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-slate-950 shadow-sm"
-    >
-      <h2 class="font-semibold">No shows found.</h2>
-      <p class="mt-1 text-sm text-slate-600">
-        The catalog is currently empty, so there is nothing to group by genre yet.
-      </p>
-    </section>
+      title="No shows found."
+      description="The catalog is currently empty, so there is nothing to group by genre yet."
+    />
 
     <section v-else class="space-y-10">
       <GenreRail

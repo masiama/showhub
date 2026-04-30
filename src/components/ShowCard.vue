@@ -2,18 +2,13 @@
 import { computed } from "vue";
 
 import type { Show } from "../types/show";
+import { formatShowRating, getShowProviderName, getShowYear } from "../utils/show";
 
 const props = defineProps<{ show: Show }>();
 
-const averageRating = computed(() => {
-  const rating = props.show.rating.average;
-  return rating === null ? "N/A" : rating.toFixed(1);
-});
-
-const releaseYear = computed(() => props.show.premiered.slice(0, 4));
-const providerName = computed(
-  () => props.show.network?.name ?? props.show.webChannel?.name ?? "TVMaze",
-);
+const averageRating = computed(() => formatShowRating(props.show));
+const releaseYear = computed(() => getShowYear(props.show, "premiered"));
+const providerName = computed(() => getShowProviderName(props.show));
 </script>
 
 <template>
