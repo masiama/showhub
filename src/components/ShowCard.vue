@@ -12,7 +12,8 @@ const providerName = computed(() => getShowProviderName(props.show));
 </script>
 
 <template>
-  <article
+  <RouterLink
+    :to="`/shows/${show.id}`"
     class="group w-44 min-w-44 space-y-3 transition-transform duration-200 hover:-translate-y-0.5"
   >
     <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
@@ -36,5 +37,5 @@ const providerName = computed(() => getShowProviderName(props.show));
       <h3 class="text-sm leading-5 font-semibold text-slate-950">{{ show.name }}</h3>
       <p class="text-sm text-slate-500">{{ providerName }}</p>
     </div>
-  </article>
+  </RouterLink>
 </template>

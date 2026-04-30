@@ -3,6 +3,7 @@ import { computed } from "vue";
 
 import GenreRail from "../components/GenreRail.vue";
 import MetricCard from "../components/MetricCard.vue";
+import PageShell from "../components/PageShell.vue";
 import StatePanel from "../components/StatePanel.vue";
 import { useGenres } from "../composables/useGenres";
 import { useTVMaze } from "../composables/useTVMaze";
@@ -21,7 +22,7 @@ const genreSections = computed(() =>
 </script>
 
 <template>
-  <main class="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 px-4 py-6 sm:px-6 lg:px-8">
+  <PageShell>
     <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <div class="grid gap-8 lg:grid-cols-[1fr_16rem] lg:items-start">
         <div class="space-y-4">
@@ -71,5 +72,5 @@ const genreSections = computed(() =>
         :shows="shows"
       />
     </section>
-  </main>
+  </PageShell>
 </template>

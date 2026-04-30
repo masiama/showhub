@@ -12,3 +12,16 @@ export const getShowYear = <T extends keyof Pick<Show, "premiered" | "ended">>(
 
 export const getShowProviderName = (show: Pick<Show, "network" | "webChannel">): string =>
   show.network?.name ?? show.webChannel?.name ?? "TVMaze";
+
+export const getShowScheduleLabel = (show: Pick<Show, "schedule">): string => {
+  const { days, time } = show.schedule;
+
+  if (days.length === 0 && !time) return "Schedule unavailable";
+  if (days.length === 0) return time;
+  if (!time) return days.join(", ");
+
+  return `${days.join(", ")} at ${time}`;
+};
+
+export const getShowRunYears = (show: Pick<Show, "premiered" | "ended">): string =>
+  `${getShowYear(show, "premiered")} - ${getShowYear(show, "ended") ?? "Present"}`;
