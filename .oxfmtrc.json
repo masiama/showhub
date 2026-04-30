@@ -3,7 +3,6 @@
   "ignorePatterns": ["typed-router.d.ts"],
   "sortImports": true,
   "sortPackageJson": true,
-  "sortTailwindcss": {
-    "functions": ["clsx"]
-  }
+  "sortTailwindcss": true,
+  "htmlWhitespaceSensitivity": "ignore"
 }
