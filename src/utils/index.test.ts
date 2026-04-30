@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { filterShowsByQuery, formatCountLabel, groupShowsByGenre, sortShowsByRating } from ".";
+import {
+  filterShowsByQuery,
+  formatCountLabel,
+  getQueryValue,
+  groupShowsByGenre,
+  sortShowsByRating,
+} from ".";
 import { createShow } from "./test-helpers";
 
 describe("formatCountLabel", () => {
@@ -55,5 +61,20 @@ describe("groupShowsByGenre", () => {
 
     expect(grouped.get("Drama")?.map((show) => show.name)).toEqual(["Bravo", "Alpha"]);
     expect(grouped.get("Sci-Fi")?.map((show) => show.name)).toEqual(["Charlie", "Alpha"]);
+  });
+});
+
+describe("getQueryValue", () => {
+  it("returns empty string for null", () => {
+    expect(getQueryValue(null)).toBe("");
+  });
+  it("returns the string value when given a string", () => {
+    expect(getQueryValue("dark")).toBe("dark");
+  });
+  it("returns the first string in an array of strings", () => {
+    expect(getQueryValue(["dark", "office"])).toBe("dark");
+  });
+  it("returns empty string if the first element in an array is not a string", () => {
+    expect(getQueryValue([null, "office"])).toBe("");
   });
 });

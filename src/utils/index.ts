@@ -1,3 +1,5 @@
+import type { LocationQueryValue } from "vue-router";
+
 import type { Show } from "../types/show";
 
 export const formatCountLabel = (count: number, singular: string): string =>
@@ -34,3 +36,6 @@ export const groupShowsByGenre = (shows: Show[]): Map<string, Show[]> => {
 
   return genreMap;
 };
+
+export const getQueryValue = (value: LocationQueryValue | LocationQueryValue[]): string =>
+  (Array.isArray(value) ? value[0] : value) ?? "";

@@ -29,7 +29,7 @@ ShowHub is a Vue 3 application built for the TVMaze frontend assignment. It pres
 
 - list TV shows by genre
 - sort shows within each genre by rating
-- search shows by name
+- url-synced search by name
 - show details page
 - responsive layout for mobile and desktop
 - keyboard navigation with hotkeys and focus indicators

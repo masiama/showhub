@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onKeyDown, onKeyPressed } from "@vueuse/core";
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import GenreRail from "../components/GenreRail.vue";
 import Kbd from "../components/Kbd.vue";
@@ -12,13 +13,15 @@ import StatePanel from "../components/StatePanel.vue";
 import { useGenres } from "../composables/useGenres";
 import { useTVMaze } from "../composables/useTVMaze";
 import { ShowsSchema } from "../types/show";
-import { filterShowsByQuery, formatCountLabel } from "../utils";
+import { filterShowsByQuery, formatCountLabel, getQueryValue } from "../utils";
 
 const { data, isFetching, error } = useTVMaze("/shows", ShowsSchema);
 const { showsByGenre } = useGenres(data);
+const route = useRoute("/");
+const router = useRouter();
 
 const searchInput = useTemplateRef("searchInput");
-const searchQuery = ref();
+const searchQuery = ref(getQueryValue(route.query.q));
 
 const totalShows = computed(() => data.value?.length ?? 0);
 const trimmedSearchQuery = computed(() => searchQuery.value.trim());
@@ -35,6 +38,31 @@ const genreSections = computed(() =>
 );
 
 const clearSearch = () => (searchQuery.value = "");
+
+watch(
+  () => route.query.q,
+  (queryValue) => {
+    const nextQuery = getQueryValue(queryValue);
+    if (nextQuery !== searchQuery.value) {
+      searchQuery.value = nextQuery;
+    }
+  },
+);
+
+watch(trimmedSearchQuery, (value) => {
+  const currentQuery = getQueryValue(route.query.q);
+
+  if (value === currentQuery) return;
+
+  const nextQuery = { ...route.query };
+  if (value) {
+    nextQuery.q = value;
+  } else {
+    delete nextQuery.q;
+  }
+
+  void router.replace({ query: nextQuery });
+});
 
 onKeyPressed("/", (e) => {
   e.preventDefault();
