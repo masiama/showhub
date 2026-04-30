@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import GenreRail from "../components/GenreRail.vue";
 import MetricCard from "../components/MetricCard.vue";
 import PageShell from "../components/PageShell.vue";
+import SectionHeader from "../components/SectionHeader.vue";
+import ShowCard from "../components/ShowCard.vue";
 import StatePanel from "../components/StatePanel.vue";
 import { useGenres } from "../composables/useGenres";
 import { useTVMaze } from "../composables/useTVMaze";
 import { ShowsSchema } from "../types/show";
+import { filterShowsByQuery, formatCountLabel } from "../utils";
 
 const { data, isFetching, error } = useTVMaze("/shows", ShowsSchema);
 const { showsByGenre } = useGenres(data);
+const searchQuery = ref("");
 
 const totalShows = computed(() => data.value?.length ?? 0);
+const trimmedSearchQuery = computed(() => searchQuery.value.trim());
+const isSearching = computed(() => trimmedSearchQuery.value.length > 0);
+const filteredShows = computed(() =>
+  data.value ? filterShowsByQuery(data.value, trimmedSearchQuery.value) : [],
+);
+const searchResultsTitle = computed(() => `Matches for "${trimmedSearchQuery.value}"`);
 const genreSections = computed(() =>
   Array.from(showsByGenre.value.entries()).sort(
     ([leftGenre, leftShows], [rightGenre, rightShows]) =>
@@ -36,6 +46,34 @@ const genreSections = computed(() =>
             Explore curated rails based on the TVMaze catalog, with each genre sorted from highest
             rated to lowest rated.
           </p>
+
+          <div class="max-w-xl space-y-2">
+            <label
+              for="show-search"
+              class="block text-xs font-medium tracking-wider text-slate-500 uppercase"
+            >
+              Search shows
+            </label>
+            <div
+              class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+            >
+              <input
+                id="show-search"
+                v-model="searchQuery"
+                type="search"
+                placeholder="Search by show name"
+                class="w-full border-0 bg-transparent p-0 text-sm text-slate-950 outline-none placeholder:text-slate-400"
+              />
+              <button
+                v-if="searchQuery"
+                type="button"
+                class="text-sm font-medium text-slate-500 transition-colors hover:text-slate-950"
+                @click="searchQuery = ''"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
         </div>
 
         <dl class="grid grid-cols-2 gap-3 lg:grid-cols-1">
@@ -57,6 +95,25 @@ const genreSections = computed(() =>
       title="Loading shows..."
       description="Pulling together the first set of genre rails."
     />
+
+    <template v-else-if="isSearching">
+      <StatePanel
+        v-if="filteredShows.length === 0"
+        title="No shows found."
+        :description="`No matches found for “${trimmedSearchQuery}”. Try another title.`"
+      />
+      <section v-else class="space-y-5">
+        <SectionHeader
+          eyebrow="Search results"
+          :title="searchResultsTitle"
+          :meta="formatCountLabel(filteredShows.length, 'result')"
+        />
+
+        <div class="flex flex-wrap gap-4">
+          <ShowCard v-for="show in filteredShows" :key="show.id" :show="show" />
+        </div>
+      </section>
+    </template>
 
     <StatePanel
       v-else-if="genreSections.length === 0"
