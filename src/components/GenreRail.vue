@@ -10,7 +10,7 @@ defineProps<{ genre: string; shows: Show[] }>();
 <template>
   <section class="space-y-4">
     <SectionHeader eyebrow="Genre" :title="genre" :meta="formatCountLabel(shows.length, 'show')" />
-    <div class="flex gap-4 overflow-x-auto py-1">
+    <div class="flex gap-4 overflow-x-auto py-1" tabindex="-1">
       <ShowCard v-for="show in shows" :key="show.id" :show="show" />
     </div>
   </section>

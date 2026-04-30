@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { onKeyDown, onKeyPressed } from "@vueuse/core";
+import { computed, ref, useTemplateRef } from "vue";
 
 import GenreRail from "../components/GenreRail.vue";
+import Kbd from "../components/Kbd.vue";
 import MetricCard from "../components/MetricCard.vue";
 import PageShell from "../components/PageShell.vue";
 import SectionHeader from "../components/SectionHeader.vue";
@@ -14,7 +16,9 @@ import { filterShowsByQuery, formatCountLabel } from "../utils";
 
 const { data, isFetching, error } = useTVMaze("/shows", ShowsSchema);
 const { showsByGenre } = useGenres(data);
-const searchQuery = ref("");
+
+const searchInput = useTemplateRef("searchInput");
+const searchQuery = ref();
 
 const totalShows = computed(() => data.value?.length ?? 0);
 const trimmedSearchQuery = computed(() => searchQuery.value.trim());
@@ -29,6 +33,25 @@ const genreSections = computed(() =>
       rightShows.length - leftShows.length || leftGenre.localeCompare(rightGenre),
   ),
 );
+
+const clearSearch = () => (searchQuery.value = "");
+
+onKeyPressed("/", (e) => {
+  e.preventDefault();
+  searchInput.value?.focus();
+  searchInput.value?.select();
+});
+
+onKeyDown("Escape", (event) => {
+  if (searchInput.value !== document.activeElement) return;
+  event.preventDefault();
+
+  if (searchQuery.value) {
+    clearSearch();
+  } else {
+    searchInput.value?.blur();
+  }
+});
 </script>
 
 <template>
@@ -55,9 +78,10 @@ const genreSections = computed(() =>
               Search shows
             </label>
             <div
-              class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+              class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-slate-950 focus-within:ring-1 focus-within:ring-slate-950"
             >
               <input
+                ref="searchInput"
                 id="show-search"
                 v-model="searchQuery"
                 type="search"
@@ -67,12 +91,19 @@ const genreSections = computed(() =>
               <button
                 v-if="searchQuery"
                 type="button"
-                class="text-sm font-medium text-slate-500 transition-colors hover:text-slate-950"
-                @click="searchQuery = ''"
+                class="rounded-sm text-sm font-medium text-slate-500 transition-colors hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 focus-visible:outline-none"
+                @click="clearSearch"
               >
                 Clear
               </button>
             </div>
+            <p class="text-xs text-slate-500">
+              Press
+              <Kbd code="/" />
+              to focus and
+              <Kbd code="Esc" />
+              to clear.
+            </p>
           </div>
         </div>
 

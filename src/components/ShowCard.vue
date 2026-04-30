@@ -14,7 +14,7 @@ const providerName = computed(() => getShowProviderName(props.show));
 <template>
   <RouterLink
     :to="`/shows/${show.id}`"
-    class="group w-44 min-w-44 space-y-3 transition-transform duration-200 hover:-translate-y-0.5"
+    class="w-44 min-w-44 space-y-3 rounded-t-xl transition-transform duration-200 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 focus-visible:outline-none"
   >
     <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
       <img

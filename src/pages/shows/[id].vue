@@ -28,7 +28,7 @@ const runYears = computed(() => (show.value ? getShowRunYears(show.value) : ""))
   <PageShell>
     <RouterLink
       to="/"
-      class="inline-flex w-fit items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-950"
+      class="inline-flex w-fit items-center gap-2 rounded-sm text-sm font-medium text-slate-600 transition-colors hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <span>←</span>
       Back to dashboard
